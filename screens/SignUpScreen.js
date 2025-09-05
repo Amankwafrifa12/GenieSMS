@@ -16,20 +16,14 @@ import { Ionicons } from '@expo/vector-icons';
 const { width, height } = Dimensions.get('window');
 
 export default function SignUpScreen({ navigation }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSignUp = () => {
-    if (!name || !email || !password || !confirmPassword) {
+    if (!username || !phone || !password) {
       Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
       return;
     }
     if (password.length < 6) {
@@ -57,21 +51,21 @@ export default function SignUpScreen({ navigation }) {
             <Ionicons name="person" size={20} color="#6C63FF" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
-              placeholder="Full Name"
-              value={name}
-              onChangeText={setName}
-              autoCapitalize="words"
+              placeholder="Username"
+              value={username}
+              onChangeText={setUsername}
+              autoCapitalize="none"
             />
           </View>
 
           <View style={styles.inputContainer}>
-            <Ionicons name="mail" size={20} color="#6C63FF" style={styles.inputIcon} />
+            <Ionicons name="call" size={20} color="#6C63FF" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
+              placeholder="Phone"
+              value={phone}
+              onChangeText={setPhone}
+              keyboardType="phone-pad"
               autoCapitalize="none"
             />
           </View>
@@ -91,27 +85,6 @@ export default function SignUpScreen({ navigation }) {
             >
               <Ionicons
                 name={showPassword ? 'eye-off' : 'eye'}
-                size={20}
-                color="#6C63FF"
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Ionicons name="lock-closed" size={20} color="#6C63FF" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry={!showConfirmPassword}
-            />
-            <TouchableOpacity
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-              style={styles.eyeIcon}
-            >
-              <Ionicons
-                name={showConfirmPassword ? 'eye-off' : 'eye'}
                 size={20}
                 color="#6C63FF"
               />

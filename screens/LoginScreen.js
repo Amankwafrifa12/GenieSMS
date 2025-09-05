@@ -16,12 +16,12 @@ import { Ionicons } from '@expo/vector-icons';
 const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
-    if (!email || !password) {
+    if (!phone || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -48,13 +48,13 @@ export default function LoginScreen({ navigation }) {
 
         <View style={styles.form}>
           <View style={styles.inputContainer}>
-            <Ionicons name="mail" size={20} color="#6C63FF" style={styles.inputIcon} />
+            <Ionicons name="call" size={20} color="#6C63FF" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
+              placeholder="Phone"
+              value={phone}
+              onChangeText={setPhone}
+              keyboardType="phone-pad"
               autoCapitalize="none"
             />
           </View>
