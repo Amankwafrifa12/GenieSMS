@@ -33,7 +33,6 @@ export default function SignUpScreen({ navigation }) {
   const slideAnim = useRef(new Animated.Value(50)).current;
   const iconScaleAnim = useRef(new Animated.Value(0)).current;
   const buttonScaleAnim = useRef(new Animated.Value(1)).current;
-  const inputScaleAnim = useRef(new Animated.Value(1)).current;
   const loadingScaleAnim = useRef(new Animated.Value(1)).current;
 
   React.useEffect(() => {
@@ -99,26 +98,10 @@ export default function SignUpScreen({ navigation }) {
   const handleFocus = (field) => {
     setFocusedField(field);
     setErrors({ ...errors, [field]: null });
-    
-    // Input focus animation
-    Animated.spring(inputScaleAnim, {
-      toValue: 1.02,
-      tension: 300,
-      friction: 3,
-      useNativeDriver: true,
-    }).start();
   };
 
   const handleBlur = () => {
     setFocusedField(null);
-    
-    // Input blur animation
-    Animated.spring(inputScaleAnim, {
-      toValue: 1,
-      tension: 300,
-      friction: 3,
-      useNativeDriver: true,
-    }).start();
   };
 
   const handleButtonPressIn = () => {
@@ -231,14 +214,7 @@ export default function SignUpScreen({ navigation }) {
             ]}
           >
             <View style={styles.inputContainer}>
-              <Animated.View 
-                style={[
-                  styles.inputContent,
-                  {
-                    transform: [{ scale: focusedField === 'username' ? inputScaleAnim : 1 }],
-                  },
-                ]}
-              >
+              <View style={styles.inputContent}>
                 <Ionicons name="person" size={20} color="#4A90E2" style={styles.inputIcon} />
                 <TextInput
                   ref={usernameInputRef}
@@ -254,19 +230,12 @@ export default function SignUpScreen({ navigation }) {
                   onFocus={() => handleFocus('username')}
                   onBlur={handleBlur}
                 />
-              </Animated.View>
+              </View>
             </View>
             {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
 
             <View style={styles.inputContainer}>
-              <Animated.View 
-                style={[
-                  styles.inputContent,
-                  {
-                    transform: [{ scale: focusedField === 'phone' ? inputScaleAnim : 1 }],
-                  },
-                ]}
-              >
+              <View style={styles.inputContent}>
                 <Ionicons name="call" size={20} color="#4A90E2" style={styles.inputIcon} />
                 <TextInput
                   ref={phoneInputRef}
@@ -283,19 +252,12 @@ export default function SignUpScreen({ navigation }) {
                   onFocus={() => handleFocus('phone')}
                   onBlur={handleBlur}
                 />
-              </Animated.View>
+              </View>
             </View>
             {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
 
             <View style={styles.inputContainer}>
-              <Animated.View 
-                style={[
-                  styles.inputContent,
-                  {
-                    transform: [{ scale: focusedField === 'password' ? inputScaleAnim : 1 }],
-                  },
-                ]}
-              >
+              <View style={styles.inputContent}>
                 <Ionicons name="lock-closed" size={20} color="#4A90E2" style={styles.inputIcon} />
                 <TextInput
                   ref={passwordInputRef}
@@ -320,7 +282,7 @@ export default function SignUpScreen({ navigation }) {
                     color="#4A90E2"
                   />
                 </TouchableOpacity>
-              </Animated.View>
+              </View>
             </View>
             {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
