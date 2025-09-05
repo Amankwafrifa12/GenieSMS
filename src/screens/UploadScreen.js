@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { View, Text, Button, Alert, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import Icon from '../components/Icon';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import Papa from 'papaparse';
@@ -156,7 +157,10 @@ export default function UploadScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Upload file (demo)</Text>
+      <View style={{flexDirection:'row', alignItems:'center', marginBottom:12}}>
+        <Icon name="md-cloud-upload" size={20} color="#007aff" />
+        <Text style={[styles.title, {marginLeft:8}]}>Upload file (demo)</Text>
+      </View>
       <Button title="Pick file" onPress={pickFile} />
       <View style={{height:8}} />
       <Button title="Upload picked file" onPress={uploadFile} />

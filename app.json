@@ -3,17 +3,36 @@
     "name": "GenieSMS",
     "slug": "geniesms",
     "version": "1.0.0",
-  
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "updates": {"fallbackToCacheTimeout": 0},
-    "assetBundlePatterns": ["**/*"],
-    "ios": {"supportsTablet": true}
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "564f7854-c916-45dc-aa3f-c76d60400500"
+      }
+    },
+    "owner": "genielab",
+    "plugins": [
+      "expo-font"
+    ],
+    "android": {
+      "package": "com.genielab.geniesms"
+    }
   }
 }

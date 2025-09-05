@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import { View, Text, Button, StyleSheet, ScrollView, Alert } from 'react-native';
-import LottieView from 'lottie-react-native';
+import Icon from '../components/Icon';
+import LottieView from '../components/LottieView';
+import { Platform, Image } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
@@ -45,17 +47,22 @@ export default function HomeScreen({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>GenieSMS</Text>
+        <Icon name="md-school" size={28} color="#007aff" />
+        <Text style={[styles.title, {marginLeft:8}]}>GenieSMS</Text>
       </View>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Lottie Animation</Text>
-        <LottieView
-          style={{height:150}}
-          autoPlay
-          loop
-          source={{uri: 'https://assets8.lottiefiles.com/private_files/lf30_editor_azzz5j8x.json'}}
-        />
+        {Platform.OS === 'web' ? (
+          <Image source={{uri: 'https://via.placeholder.com/320x150.png?text=GenieSMS'}} style={{height:150, width:'100%'}} resizeMode="cover" />
+        ) : (
+          <LottieView
+            style={{height:150}}
+            autoPlay
+            loop
+            source={{uri: 'https://assets8.lottiefiles.com/private_files/lf30_editor_azzz5j8x.json'}}
+          />
+        )}
       </View>
 
       <View style={styles.card}>
