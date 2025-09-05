@@ -18,7 +18,8 @@ export default function WelcomeScreen({ navigation }) {
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
-  const buttonScaleAnim = useRef(new Animated.Value(1)).current;
+  const loginButtonScaleAnim = useRef(new Animated.Value(1)).current;
+  const signUpButtonScaleAnim = useRef(new Animated.Value(1)).current;
 
   React.useEffect(() => {
     Animated.parallel([
@@ -35,8 +36,8 @@ export default function WelcomeScreen({ navigation }) {
     ]).start();
   }, []);
 
-  const handleButtonPressIn = () => {
-    Animated.spring(buttonScaleAnim, {
+  const handleLoginPressIn = () => {
+    Animated.spring(loginButtonScaleAnim, {
       toValue: 0.95,
       tension: 300,
       friction: 3,
@@ -44,8 +45,26 @@ export default function WelcomeScreen({ navigation }) {
     }).start();
   };
 
-  const handleButtonPressOut = () => {
-    Animated.spring(buttonScaleAnim, {
+  const handleLoginPressOut = () => {
+    Animated.spring(loginButtonScaleAnim, {
+      toValue: 1,
+      tension: 300,
+      friction: 3,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleSignUpPressIn = () => {
+    Animated.spring(signUpButtonScaleAnim, {
+      toValue: 0.95,
+      tension: 300,
+      friction: 3,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleSignUpPressOut = () => {
+    Animated.spring(signUpButtonScaleAnim, {
       toValue: 1,
       tension: 300,
       friction: 3,
@@ -91,15 +110,15 @@ export default function WelcomeScreen({ navigation }) {
             <Animated.View
               style={[
                 {
-                  transform: [{ scale: buttonScaleAnim }],
+                  transform: [{ scale: loginButtonScaleAnim }],
                 },
               ]}
             >
               <TouchableOpacity
                 style={styles.loginButton}
                 onPress={handleLogin}
-                onPressIn={handleButtonPressIn}
-                onPressOut={handleButtonPressOut}
+                onPressIn={handleLoginPressIn}
+                onPressOut={handleLoginPressOut}
                 activeOpacity={0.8}
               >
                 <Text style={styles.loginButtonText}>Login</Text>
@@ -109,15 +128,15 @@ export default function WelcomeScreen({ navigation }) {
             <Animated.View
               style={[
                 {
-                  transform: [{ scale: buttonScaleAnim }],
+                  transform: [{ scale: signUpButtonScaleAnim }],
                 },
               ]}
             >
               <TouchableOpacity
                 style={styles.signUpButton}
                 onPress={handleSignUp}
-                onPressIn={handleButtonPressIn}
-                onPressOut={handleButtonPressOut}
+                onPressIn={handleSignUpPressIn}
+                onPressOut={handleSignUpPressOut}
                 activeOpacity={0.8}
               >
                 <Text style={styles.signUpButtonText}>Sign Up</Text>
