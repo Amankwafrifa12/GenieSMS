@@ -51,6 +51,11 @@ export default function App() {
             initialRouteName="Login"
             screenOptions={{
               headerShown: false,
+              animation: 'slide_from_right',
+              animationDuration: 300,
+              presentation: 'card',
+              gestureEnabled: true,
+              gestureDirection: 'horizontal',
             }}
           >
             <Stack.Screen name="Login" component={LoginScreen} />

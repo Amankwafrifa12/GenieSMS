@@ -13,6 +13,7 @@ import {
   Animated,
   ActivityIndicator,
   StatusBar,
+  Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { HeaderWave } from '../components/HeaderWave';
@@ -30,19 +31,34 @@ export default function SignUpScreen({ navigation }) {
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
+  const iconScaleAnim = useRef(new Animated.Value(0)).current;
+  const buttonScaleAnim = useRef(new Animated.Value(1)).current;
+  const inputScaleAnim = useRef(new Animated.Value(1)).current;
+  const loadingScaleAnim = useRef(new Animated.Value(1)).current;
 
   React.useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
+    // Staggered animation sequence
+    Animated.sequence([
+      // Icon bounce animation
+      Animated.spring(iconScaleAnim, {
         toValue: 1,
-        duration: 800,
+        tension: 10,
+        friction: 3,
         useNativeDriver: true,
       }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
+      // Main content fade and slide
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+      ]),
     ]).start();
   }, []);
 
@@ -71,9 +87,11 @@ export default function SignUpScreen({ navigation }) {
     if (!validateForm()) return;
 
     setIsLoading(true);
+    startLoadingAnimation();
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
+      stopLoadingAnimation();
       Alert.alert('Success', 'Account created successfully!');
     }, 2000);
   };
@@ -81,11 +99,86 @@ export default function SignUpScreen({ navigation }) {
   const handleFocus = (field) => {
     setFocusedField(field);
     setErrors({ ...errors, [field]: null });
+    
+    // Input focus animation
+    Animated.spring(inputScaleAnim, {
+      toValue: 1.02,
+      tension: 300,
+      friction: 3,
+      useNativeDriver: true,
+    }).start();
   };
 
   const handleBlur = () => {
     setFocusedField(null);
+    
+    // Input blur animation
+    Animated.spring(inputScaleAnim, {
+      toValue: 1,
+      tension: 300,
+      friction: 3,
+      useNativeDriver: true,
+    }).start();
   };
+
+  const handleButtonPressIn = () => {
+    Animated.spring(buttonScaleAnim, {
+      toValue: 0.95,
+      tension: 300,
+      friction: 3,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handleButtonPressOut = () => {
+    Animated.spring(buttonScaleAnim, {
+      toValue: 1,
+      tension: 300,
+      friction: 3,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const startLoadingAnimation = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(loadingScaleAnim, {
+          toValue: 1.1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(loadingScaleAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  };
+
+  const stopLoadingAnimation = () => {
+    loadingScaleAnim.stopAnimation();
+    loadingScaleAnim.setValue(1);
+  };
+
+  const handleSubmitUsername = () => {
+    // Move focus to phone field
+    phoneInputRef.current?.focus();
+  };
+
+  const handleSubmitPhone = () => {
+    // Move focus to password field
+    passwordInputRef.current?.focus();
+  };
+
+  const handleSubmitPassword = () => {
+    Keyboard.dismiss();
+    handleSignUp();
+  };
+
+  const usernameInputRef = useRef(null);
+  const phoneInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
 
   return (
     <View style={styles.mainContainer}>
@@ -113,7 +206,16 @@ export default function SignUpScreen({ navigation }) {
             ]}
           >
             <View style={styles.iconContainer}>
-              <Ionicons name="person-add" size={60} color="#4A90E2" />
+              <Animated.View 
+                style={[
+                  styles.iconContent,
+                  {
+                    transform: [{ scale: iconScaleAnim }],
+                  },
+                ]}
+              >
+                <Ionicons name="person-add" size={60} color="#4A90E2" />
+              </Animated.View>
             </View>
             <Text style={styles.title}>Create Account</Text>
             <Text style={styles.subtitle}>Join us today</Text>
@@ -129,73 +231,127 @@ export default function SignUpScreen({ navigation }) {
             ]}
           >
             <View style={styles.inputContainer}>
-              <Ionicons name="person" size={20} color="#4A90E2" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Username"
-                placeholderTextColor="#999"
-                value={username}
-                onChangeText={setUsername}
-                autoCapitalize="none"
-                onFocus={() => handleFocus('username')}
-                onBlur={handleBlur}
-              />
+              <Animated.View 
+                style={[
+                  styles.inputContent,
+                  {
+                    transform: [{ scale: focusedField === 'username' ? inputScaleAnim : 1 }],
+                  },
+                ]}
+              >
+                <Ionicons name="person" size={20} color="#4A90E2" style={styles.inputIcon} />
+                <TextInput
+                  ref={usernameInputRef}
+                  style={styles.input}
+                  placeholder="Username"
+                  placeholderTextColor="#999"
+                  value={username}
+                  onChangeText={setUsername}
+                  autoCapitalize="none"
+                  returnKeyType="next"
+                  onSubmitEditing={handleSubmitUsername}
+                  blurOnSubmit={false}
+                  onFocus={() => handleFocus('username')}
+                  onBlur={handleBlur}
+                />
+              </Animated.View>
             </View>
             {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
 
             <View style={styles.inputContainer}>
-              <Ionicons name="call" size={20} color="#4A90E2" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Phone Number"
-                placeholderTextColor="#999"
-                value={phone}
-                onChangeText={setPhone}
-                keyboardType="phone-pad"
-                autoCapitalize="none"
-                onFocus={() => handleFocus('phone')}
-                onBlur={handleBlur}
-              />
+              <Animated.View 
+                style={[
+                  styles.inputContent,
+                  {
+                    transform: [{ scale: focusedField === 'phone' ? inputScaleAnim : 1 }],
+                  },
+                ]}
+              >
+                <Ionicons name="call" size={20} color="#4A90E2" style={styles.inputIcon} />
+                <TextInput
+                  ref={phoneInputRef}
+                  style={styles.input}
+                  placeholder="Phone Number"
+                  placeholderTextColor="#999"
+                  value={phone}
+                  onChangeText={setPhone}
+                  keyboardType="phone-pad"
+                  autoCapitalize="none"
+                  returnKeyType="next"
+                  onSubmitEditing={handleSubmitPhone}
+                  blurOnSubmit={false}
+                  onFocus={() => handleFocus('phone')}
+                  onBlur={handleBlur}
+                />
+              </Animated.View>
             </View>
             {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
 
             <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed" size={20} color="#4A90E2" style={styles.inputIcon} />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#999"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-                onFocus={() => handleFocus('password')}
-                onBlur={handleBlur}
-              />
-              <TouchableOpacity
-                onPress={() => setShowPassword(!showPassword)}
-                style={styles.eyeIcon}
+              <Animated.View 
+                style={[
+                  styles.inputContent,
+                  {
+                    transform: [{ scale: focusedField === 'password' ? inputScaleAnim : 1 }],
+                  },
+                ]}
               >
-                <Ionicons
-                  name={showPassword ? 'eye-off' : 'eye'}
-                  size={20}
-                  color="#4A90E2"
+                <Ionicons name="lock-closed" size={20} color="#4A90E2" style={styles.inputIcon} />
+                <TextInput
+                  ref={passwordInputRef}
+                  style={styles.input}
+                  placeholder="Password"
+                  placeholderTextColor="#999"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  returnKeyType="done"
+                  onSubmitEditing={handleSubmitPassword}
+                  onFocus={() => handleFocus('password')}
+                  onBlur={handleBlur}
                 />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIcon}
+                >
+                  <Ionicons
+                    name={showPassword ? 'eye-off' : 'eye'}
+                    size={20}
+                    color="#4A90E2"
+                  />
+                </TouchableOpacity>
+              </Animated.View>
             </View>
             {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
-            <TouchableOpacity
-              style={[styles.signUpButton, isLoading && styles.signUpButtonDisabled]}
-              onPress={handleSignUp}
-              disabled={isLoading}
-              activeOpacity={0.8}
+            <Animated.View
+              style={[
+                {
+                  transform: [{ scale: buttonScaleAnim }],
+                },
+              ]}
             >
-              {isLoading ? (
-                <ActivityIndicator color="#FFF" size="small" />
-              ) : (
-                <Text style={styles.signUpButtonText}>Sign Up</Text>
-              )}
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.signUpButton, isLoading && styles.signUpButtonDisabled]}
+                onPress={handleSignUp}
+                onPressIn={handleButtonPressIn}
+                onPressOut={handleButtonPressOut}
+                disabled={isLoading}
+                activeOpacity={0.8}
+              >
+                {isLoading ? (
+                  <Animated.View
+                    style={{
+                      transform: [{ scale: loadingScaleAnim }],
+                    }}
+                  >
+                    <ActivityIndicator color="#FFF" size="small" />
+                  </Animated.View>
+                ) : (
+                  <Text style={styles.signUpButtonText}>Sign Up</Text>
+                )}
+              </TouchableOpacity>
+            </Animated.View>
           </Animated.View>
 
           <Animated.View
@@ -231,7 +387,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 24,
     paddingVertical: 40,
-    paddingTop: 200, // Account for header wave and status bar
+    paddingTop: 220, // Account for taller header wave and status bar
     paddingBottom: 40,
   },
   header: {
@@ -239,9 +395,9 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   iconContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
@@ -251,6 +407,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 6,
+  },
+  iconContent: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     fontSize: 28,
@@ -268,18 +432,20 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F8F9FA',
-    borderRadius: 12,
     marginBottom: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  inputContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     borderWidth: 1,
     borderColor: '#E9ECEF',
   },
